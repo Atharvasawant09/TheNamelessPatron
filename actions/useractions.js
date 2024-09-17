@@ -35,11 +35,16 @@ export const initiate = async (amount, to_username, paymentform) => {
 
     export const fetchpayments = async (username) => {
         await connectDb()
-        //Find payments sorted by dereasing order of amount and flatten objects
-        let p = await Payment.find({to_user:username, done:true}).sort({amount: -1}).limit(9).lean()
+        let p = await Payment.find({ to_user: username, done: true }).sort({ amount: -1 }).limit(9).lean()
+        // Convert _id and any other fields to plain strings
+        p = p.map(payment => ({ ...payment, _id: payment._id.toString(),
+        // Convert other non-serializable fields if needed
+        }))
+    
         console.log('Fetched Payments:', p); 
         return p
     }
+    
 
     export const updateProfile = async(data,oldusername)=>{
         await connectDb()
